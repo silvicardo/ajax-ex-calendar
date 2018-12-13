@@ -20,42 +20,100 @@ Holiday API: https://holidayapi.com/ (required params: key, country, year, month
 $(document).ready(function () {
   console.log('welcome to ajax-ex-calendar');
 
-  $.ajax({
-    url: 'https://holidayapi.com/v1/holidays?key=08c8428e-02cd-43c9-bd37-680414486a2d&country=IT&year=2017&month=1',
-    method: 'GET',
-    success: function (apiData) {
+  caricaLingueSupportatePoiAvviaCalendario();
 
-      var meseScelto = creaMeseDa(2017,1);
-
-      meseScelto.settimane = completaDati(meseScelto, apiData.holidays);
-
-      console.log(meseScelto);
-
-      //produci h1 .selected_month
-      mostraTitoloPer(meseScelto);
-
-      //produci gli li per il mese corrente
-      mostraListaGiorniPer(meseScelto);
-
-    },
-    error: function(error){
-      console.log(error);
-    }
-  })
 
 });
 
 //FUNZIONI
 
+//FUNZIONE PRINCIPALE
+
+function caricaLingueSupportatePoiAvviaCalendario() {
+  $.get('https://holidayapi.com/', function( data ) {
+
+    var lingueApi = ottieniElencoLingueSupportateDa($.parseHTML(data));
+
+    var lingueMomentJS = moment.locales();
+    
+    var lingueSupportateProgramma = generaListaLingueProgrammaDa(lingueApi, lingueMomentJS);
+
+    var urlBaseApi = 'https://holidayapi.com/v1/holidays';
+    var chiaveApi = '08c8428e-02cd-43c9-bd37-680414486a2d';
+
+
+    $('#inputMese').change(function () {
+
+      var meseAnno = $(this).val().split('-');
+
+      var apiParameters = {
+        key: chiaveApi,
+        country: 'IT',
+        year: meseAnno[0],
+        month : meseAnno[1],
+      };
+        moment.locale('it');
+        console.log(moment.locale());
+        console.log(moment.locale());
+
+      $.ajax({
+        url: urlBaseApi,
+        method: 'GET',
+        data: apiParameters,
+        success: function (apiData) {
+
+          var meseScelto = creaMeseDa(apiParameters.year,apiParameters.month);
+
+          meseScelto.settimane = completaDati(meseScelto, apiData.holidays);
+
+          console.log(meseScelto);
+
+          //produci h1 .selected_month
+          mostraTitoloPer(meseScelto);
+
+          //produci gli li per il mese corrente
+          mostraListaGiorniPer(meseScelto);
+
+        },
+        error: function(error){
+          console.log(error);
+        }
+      });
+    });
+
+  });
+}
+
 //LOGICA(MOMENT.JS)
+function ottieniElencoLingueSupportateDa(htmlApi) {
+  var lingueApi = [];
+  $(htmlApi).find('.well-countries a').each(function() {
+   var compHref = $(this).attr('href').split('/');
+   if (compHref[2].length <= 6){
+     lingueApi.push(compHref[2]);
+   }
+ });
+
+ return lingueApi;
+}
+
+function generaListaLingueProgrammaDa(lingueApi, lingueMoment) {
+  var lingueProgramma = [];
+  for (var i = 0; i < lingueApi.length; i++) {
+    if (lingueMoment.includes(lingueApi[i])) {
+      lingueProgramma.push(lingueApi[i]);
+    }
+  }
+  return lingueProgramma;
+}
 
 function creaMeseDa(anno, nrMese) {
 
   var mese = moment().year(anno).month(nrMese - 1);
 
   var meseScelto = {
-          nome: mese.format("MMMM"),
-          numeroMeseNellAnno: mese.format('MM'),
+          nome: moment.months(nrMese - 1),
+          numeroMeseNellAnno: parseInt(mese.format('MM')),
           anno: anno,
           numeroDiGiorni: mese.daysInMonth(),
         };
@@ -118,6 +176,7 @@ function creaSettimaneDa(giorni) {
 //INTERFACCIA
 
 function mostraTitoloPer(mese) {
+  $('.selected_month').remove();
   var htmlTemplateMese = $('#selectedMonth').html();
   var template = Handlebars.compile(htmlTemplateMese);
   var data = {
@@ -130,7 +189,7 @@ function mostraTitoloPer(mese) {
 }
 
 function mostraListaGiorniPer(mese) {
-
+  $('.days .day_item').remove();
   var giorniDelMese = [];
   for (var i = 0; i < mese.settimane.length; i++) {
     giorniDelMese = giorniDelMese.concat(mese.settimane[i]);
