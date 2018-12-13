@@ -2,8 +2,8 @@
 <html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8">
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
+  <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Montserrat" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
   <link rel="stylesheet" href="style.css">
   <title>ajax-ex-calendar</title>
 </head>
@@ -11,30 +11,48 @@
 
   <div id="main-container">
 
-    
-    <label for="inputMese">Select Month:</label>
 
-    <input type="month" id="inputMese" name="start" min="2017-01" value="2017-01">
+    <nav>
+      <i class="fas fa-calendar-alt"></i>
+      <h1 class="nav_title">CALENDARIO DELLE FESTIVITA' INTERNAZIONALE</h1>
+      <i class="fas fa-globe-europe"></i>
+    </nav>
 
+    <div class="content">
 
-    <div class="month">
-      <script id="selectedMonth" type="text/x-handlebars-template">
-        <h1 class="selected_month">{{ month }} {{ year }}</h1>
-      </script>
+      <div class="program_options">
+        <div class="month_selector">
+          <label for="inputMese">Seleziona il mese:</label>
+
+          <input type="month" id="inputMese" name="start" min="2017-01" max="2018-11" value="2017-01">
+        </div>
+        <div class="language_selector">
+        </div>
+      </div>
+
+      <div class="calendar">
+
+        <div class="month">
+          <script id="selectedMonth" type="text/x-handlebars-template">
+            <h1 class="selected_month">{{ month }} {{ year }}</h1>
+          </script>
+        </div>
+
+        <ul class="days">
+            <script id="day" type="text/x-handlebars-template">
+              <li class="day_item">{{ number }} {{ month }} <span class="festivity"> - {{ festivity }}</span></li>
+            </script>
+        </ul>
+
+      </div>
+
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js" charset="utf-8"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js" charset="utf-8"></script>
+    <script src="main.js" charset="utf-8"></script>
+  </body>
+  </html>
 
-    <ul class="days">
-        <script id="day" type="text/x-handlebars-template">
-          <li class="day_item">{{ number }} {{ month }} <span class="festivity"> - {{ festivity }}</span></li>
-        </script>
-    </ul>
-
-  </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js" charset="utf-8"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js" charset="utf-8"></script>
-  <script src="main.js" charset="utf-8"></script>
-</body>
-</html>
+    </div>

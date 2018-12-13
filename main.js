@@ -22,7 +22,6 @@ $(document).ready(function () {
 
   caricaLingueSupportatePoiAvviaCalendario();
 
-
 });
 
 //FUNZIONI
@@ -30,17 +29,16 @@ $(document).ready(function () {
 //FUNZIONE PRINCIPALE
 
 function caricaLingueSupportatePoiAvviaCalendario() {
-  $.get('https://holidayapi.com/', function( data ) {
+  $.get('https://holidayapi.com/', function (data) {
 
     var lingueApi = ottieniElencoLingueSupportateDa($.parseHTML(data));
 
     var lingueMomentJS = moment.locales();
-    
+
     var lingueSupportateProgramma = generaListaLingueProgrammaDa(lingueApi, lingueMomentJS);
 
     var urlBaseApi = 'https://holidayapi.com/v1/holidays';
     var chiaveApi = '08c8428e-02cd-43c9-bd37-680414486a2d';
-
 
     $('#inputMese').change(function () {
 
@@ -52,9 +50,8 @@ function caricaLingueSupportatePoiAvviaCalendario() {
         year: meseAnno[0],
         month : meseAnno[1],
       };
-        moment.locale('it');
-        console.log(moment.locale());
-        console.log(moment.locale());
+
+      moment.locale('it');
 
       $.ajax({
         url: urlBaseApi,
@@ -62,7 +59,7 @@ function caricaLingueSupportatePoiAvviaCalendario() {
         data: apiParameters,
         success: function (apiData) {
 
-          var meseScelto = creaMeseDa(apiParameters.year,apiParameters.month);
+          var meseScelto = creaMeseDa(apiParameters.year, apiParameters.month);
 
           meseScelto.settimane = completaDati(meseScelto, apiData.holidays);
 
@@ -75,9 +72,11 @@ function caricaLingueSupportatePoiAvviaCalendario() {
           mostraListaGiorniPer(meseScelto);
 
         },
-        error: function(error){
+
+        error: function (error) {
           console.log(error);
-        }
+        },
+
       });
     });
 
