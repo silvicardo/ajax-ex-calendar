@@ -44,7 +44,7 @@
 
 #main-container {
   width: 100vw;
-  background:#6BB73C;
+  height: 100vh;
 }
 
 /* navBar */
@@ -77,8 +77,8 @@ nav .fas {
 /* content */
 
 .content {
-  height: 100vh - 80px;
   width: 100vw;
+  background:#6BB73C;
 }
 
 .content .program_options {
@@ -132,8 +132,4 @@ nav .fas {
 
 .day_item .festivity {
   color: white;
-}
-
-.selectedMonth {
-
 }
