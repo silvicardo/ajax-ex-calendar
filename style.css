@@ -17,9 +17,9 @@
   font-family: 'Montserrat', sans-serif;
 }
 
-/* ::-webkit-scrollbar {
+::-webkit-scrollbar {
   display: none;
-} */
+}
 
 /************************************************/
 /************* OGGETTI RICORRENTI ***************/
@@ -50,6 +50,10 @@
 /* navBar */
 
 nav {
+  position: fixed;
+  left:0;
+  top: 0;
+  z-index: 1;
   width: 100%;
   height: 80px;
   padding: 0px 30px;
@@ -77,10 +81,12 @@ nav .fas {
 /* content */
 
 .content {
+  margin-top: 80px;
   width: 100vw;
   background:#6BB73C;
 }
 
+/* content -> program_options */
 .content .program_options {
   height: 70px;
   width: 100%;
@@ -90,12 +96,16 @@ nav .fas {
   background: #72C480;
 }
 
-.program_options .month_selector label {
+.content .program_options .option {
+  margin-right: 40px;
+}
+
+.program_options label {
   margin-right: 20px;
   font-size: 20px;
 }
 
-#inputMese, #inputMese:focus {
+#inputMese, #inputMese:focus, #languages {
   outline-style: none;
   border: 0;
   height: 35px;
@@ -106,6 +116,22 @@ nav .fas {
   color: white;
 }
 
+.program_options .language_selector {
+  height: 70px;
+  max-width: 300px;
+  display: flex;
+  align-items: center;
+}
+
+#languages .language {
+  display: block;
+}
+
+#languages .language.template {
+  display: none;
+}
+
+/* content -> calendar */
 .content .calendar {
   padding: 20px;
 }

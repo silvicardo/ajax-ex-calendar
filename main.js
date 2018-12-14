@@ -37,47 +37,29 @@ function caricaLingueSupportatePoiAvviaCalendario() {
 
     var lingueSupportateProgramma = generaListaLingueProgrammaDa(lingueApi, lingueMomentJS);
 
-    var urlBaseApi = 'https://holidayapi.com/v1/holidays';
-    var chiaveApi = '08c8428e-02cd-43c9-bd37-680414486a2d';
+    popolaLista(lingueSupportateProgramma);
+
+    var apiParameters = {
+      urlBaseApi: 'https://holidayapi.com/v1/holidays',
+      data: {
+        key: 'ec31bd05-cbe6-4c94-8047-0751fdd1736c',
+        year: 2017,
+        month: 1,
+        country: 'IT',
+      },
+    };
+
+    generaMeseCalendarioConChiamataApi(apiParameters);
 
     $('#inputMese').change(function () {
 
       var meseAnno = $(this).val().split('-');
 
-      var apiParameters = {
-        key: chiaveApi,
-        country: 'IT',
-        year: meseAnno[0],
-        month : meseAnno[1],
-      };
+      apiParameters.data.year = meseAnno[0];
+      apiParameters.data.month = meseAnno[1];
+      apiParameters.data.country = $('#languages').val();
 
-      moment.locale('it');
-
-      $.ajax({
-        url: urlBaseApi,
-        method: 'GET',
-        data: apiParameters,
-        success: function (apiData) {
-
-          var meseScelto = creaMeseDa(apiParameters.year, apiParameters.month);
-
-          meseScelto.settimane = completaDati(meseScelto, apiData.holidays);
-
-          console.log(meseScelto);
-
-          //produci h1 .selected_month
-          mostraTitoloPer(meseScelto);
-
-          //produci gli li per il mese corrente
-          mostraListaGiorniPer(meseScelto);
-
-        },
-
-        error: function (error) {
-          console.log(error);
-        },
-
-      });
+      generaMeseCalendarioConChiamataApi(apiParameters);
     });
 
   });
@@ -100,7 +82,7 @@ function generaListaLingueProgrammaDa(lingueApi, lingueMoment) {
   var lingueProgramma = [];
   for (var i = 0; i < lingueApi.length; i++) {
     if (lingueMoment.includes(lingueApi[i])) {
-      lingueProgramma.push(lingueApi[i]);
+      lingueProgramma.push(lingueApi[i].toUpperCase());
     }
   }
   return lingueProgramma;
@@ -139,6 +121,37 @@ function creaGiorniDel(mese) {
 }
 
 //LOGICA DATI API
+
+function generaMeseCalendarioConChiamataApi(apiParameters) {
+
+  $.ajax({
+    url: apiParameters.urlBaseApi,
+    method: 'GET',
+    data: apiParameters.data,
+    success: function (apiData) {
+
+      moment.locale(apiParameters.data.country);
+
+      var meseScelto = creaMeseDa(apiParameters.data.year, apiParameters.data.month);
+
+      meseScelto.settimane = completaDati(meseScelto, apiData.holidays);
+
+      console.log(meseScelto);
+
+      //produci h1 .selected_month
+      mostraTitoloPer(meseScelto);
+
+      //produci gli li per il mese corrente
+      mostraListaGiorniPer(meseScelto);
+
+    },
+
+    error: function (error) {
+      console.log(error);
+    },
+
+  });
+}
 
 function completaDati(mese, festivita) {
 
@@ -185,6 +198,17 @@ function mostraTitoloPer(mese) {
   var htmlRisultato = template(data);
 
   $('.month').append(htmlRisultato)
+}
+
+function popolaLista(lingue) {
+  for (var i = 0; i < lingue.length; i++) {
+
+    var cloneTemplateLingua = $('#languages .language.template').clone();
+
+    cloneTemplateLingua.removeClass('template').attr('value', lingue[i]).text(lingue[i]);
+
+    $('#languages').append(cloneTemplateLingua);
+  }
 }
 
 function mostraListaGiorniPer(mese) {
