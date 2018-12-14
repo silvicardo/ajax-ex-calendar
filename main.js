@@ -66,6 +66,7 @@ function caricaLingueSupportatePoiAvviaCalendario() {
 }
 
 //LOGICA(MOMENT.JS)
+
 function ottieniElencoLingueSupportateDa(htmlApi) {
   var lingueApi = [];
   $(htmlApi).find('.well-countries a').each(function() {
@@ -197,7 +198,7 @@ function mostraTitoloPer(mese) {
   }
   var htmlRisultato = template(data);
 
-  $('.month').append(htmlRisultato)
+  $('.month').append(htmlRisultato);
 }
 
 function popolaLista(lingue) {
