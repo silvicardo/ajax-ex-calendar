@@ -26,7 +26,7 @@
 }
 
 .bg_grey {
-  background: grey;
+  background: darkgrey;
 }
 
 /************************************************/
@@ -38,7 +38,7 @@
 /**********************************************/
 
 body {
-  background:#6BB73C;  
+  background:#6BB73C;
 }
 
 #main-container {
@@ -49,13 +49,14 @@ body {
 /* navBar */
 
 nav {
+  position: relative;
   width: 100%;
   height: 80px;
   padding: 0px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-image: url('http://www.navcommerce.io/media/1042/header-background-clouds2-ocean-green-500px.png?anchor=center&mode=crop&width=1140&height=600&rnd=131181219030000000');
+  background-image: url('nav_bg.png');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -63,9 +64,27 @@ nav {
 }
 
 nav .nav_title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  line-height: 80px;
   font-size: 35px;
   font-weight: 700;
   text-transform: uppercase;
+}
+
+@media all and (max-width: 1800px) {
+
+  nav .nav_title span {
+    display: none;
+  }
+
+  nav .nav_title {
+    position: relative;
+    left: 0;
+    transform: translateX(0);
+  }
+
 }
 
 nav .fas {
@@ -73,30 +92,24 @@ nav .fas {
   font-size: 45px;
 }
 
-/* content */
+/*navbar -> program_options */
 
-.content {
-  width: 100vw;
-}
-
-/* content -> program_options */
-
-.content .program_options {
-  height: 70px;
-  width: 100%;
+.program_options {
+  height: 80px;
   padding: 0px 30px;
   display: flex;
   align-items: center;
-  background: #72C480;
 }
 
-.content .program_options .option {
-  margin-right: 40px;
+.program_options .option {
+  height: 100%;
 }
 
 .program_options label {
-  margin-right: 20px;
+  margin: 0px 15px;
   font-size: 20px;
+  white-space: nowrap;
+  color: white;
 }
 
  #languages {
@@ -125,12 +138,22 @@ nav .fas {
   display: none;
 }
 
+/* content */
+
+.content {
+  width: 100vw;
+}
+
 /* content -> calendar */
 
 .content .calendar {
-  width: 700px;
+  width: 910px;
   margin: 50px auto;
+  border-radius: 12px;
+  overflow: hidden;
 }
+
+/* content -> calendar  -> calendar_header */
 
 .content .calendar_header {
  height: 100px;
@@ -141,6 +164,7 @@ nav .fas {
  color: white;
  background: red;
 }
+
 .calendar .calendar_header .month {
   margin-bottom: 20px;
   text-transform: capitalize;
@@ -148,13 +172,18 @@ nav .fas {
   font-size: 25px;
   color: white;
 }
+
 .content .calendar_header a {
   margin: 0px 20px;
 }
+
 .content .calendar_header .fas {
   font-size: 50px;
   color: white;
 }
+
+/* content -> calendar  -> calendar_body */
+/* Regole Settimane e Giorni */
 
 .content .calendar_body {
   width: 100%;
@@ -162,18 +191,42 @@ nav .fas {
 }
 
 .content .calendar_body .week {
-  height: 100px;
+  height: 130px;
   width: 100%;
 }
 
 .content .calendar_body .week .day {
+  position: relative;
   float: left;
-  height: 100px;
-  width: 100px;
+  height: 130px;
+  width: 130px;
   padding: 5px;
   border: 1px solid lightgrey;
 }
 
-.content .calendar_body .week .day.festivity {
-  background: pink;
+.week .day .nrOfDay {
+  font-size: 25px;
+}
+
+.week .day .dayName {
+  font-size: 13px;
+}
+
+.week .day .festivity {
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  padding-top: 5px;
+  font-size: 15px;
+  word-wrap: break-word;
+  border-top: 1px solid white;
+}
+
+.content .calendar_body .week .day.holiday {
+  background: red;
+}
+
+.content .calendar_body .week .day.holiday * {
+  color: white;
 }

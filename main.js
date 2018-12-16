@@ -104,7 +104,7 @@ function ottieniElencoLingueSupportateDa(htmlApi) {
   $(htmlApi).find('.well-countries a').each(function() {
    var attributoHrefDiACorrente = $(this).attr('href').split('/');
    if (attributoHrefDiACorrente[2].length <= 6){
-     lingueApi.push(compHref[2]);
+     lingueApi.push(attributoHrefDiACorrente[2]);
    }
  });
 

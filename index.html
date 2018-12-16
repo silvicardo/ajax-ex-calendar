@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <link href="https://fonts.googleapis.com/css?family=Dancing+Script|Montserrat" rel="stylesheet">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css">
   <link rel="stylesheet" href="style.css">
   <title>ajax-ex-calendar</title>
 </head>
@@ -13,22 +13,25 @@
 
     <nav>
       <i class="fas fa-calendar-alt"></i>
-      <h1 class="nav_title">CALENDARIO DELLE FESTIVITA' INTERNAZIONALE</h1>
-      <i class="fas fa-globe-europe"></i>
-    </nav>
 
-    <div class="content">
+      <h1 class="nav_title">CALENDARIO <span>DELLE FESTIVITA' INTERNAZIONALE</span></h1>
 
-      <div class="program_options hidden">
+      <div class="program_options">
         <div class="option language_selector">
-          <label for="inputMese">Seleziona la lingua:</label>
+          <i class="fas fa-globe-europe"></i>
+          <label for="inputMese">Seleziona la lingua</label>
           <select id="languages">
               <option class="language template" value="IT">IT</option>
           </select>
         </div>
       </div>
 
+    </nav>
+
+    <div class="content">
+
       <div class="calendar">
+
         <div class="calendar_header">
           <a href="#"><i class="fas fa-arrow-circle-left"></i></a>
           <div class="month">
@@ -38,6 +41,7 @@
           </div>
           <a href="#"><i class="fas fa-arrow-circle-right"></i></a>
         </div>
+
         <div class="calendar_body">
           <div class="week first">
           </div>
@@ -51,17 +55,19 @@
           </div>
           <div class="week sixth">
           </div>
+
           <script id="dayTemplate" type="text/x-handlebars-template">
             <div class="day">
-              <h4> {{ nrGiorno }}</h4>
-              <h4>{{ nomeGiornoInSettimana}}</h4>
+              <h4 class="nrOfDay"> {{ nrGiorno }}</h4>
+              <h4 class="dayName">{{ nomeGiornoInSettimana}}</h4>
               <h4 class="festivity"> {{ nomeFestivita }}</h4>
-              <h4></h4>
             </div>
           </script>
+
         </div>
 
       </div>
+
     </div>
 
   </div>
