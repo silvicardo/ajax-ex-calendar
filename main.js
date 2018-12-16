@@ -1,21 +1,22 @@
 /**********************************************/
 /**********************************************/
-/*** PROGETTO: ajax-ex-calendar - main.js ***/
+/**** PROGETTO: ajax-ex-calendar - main.js ****/
 /**********************************************/
 /**********************************************/
 
-/* Creare un calendario dinamico con le festività di una nazione, selezionabile da un menu a tendina. Partiamo dal gennaio 2017 dando la possibilità di cambiare mese, gestendo il caso in cui l’API non possa ritornare festività. */
+/* Creare un calendario dinamico con le festività di una nazione, selezionabile da un menu a tendina. Partiamo dal gennaio 2017 dando la possibilità di cambiare mese, gestendo il caso in cui l’API non possa ritornare festività.
 
-/*
 LIbreria Date: https://momentjs.com/ (js base: https://momentjs.com/downloads/moment.min.js)
 Holiday API: https://holidayapi.com/ (required params: key, country, year, month)
+
+API KEY : 08c8428e-02cd-43c9-bd37-680414486a2d
+TEST URL : https://holidayapi.com/v1/holidays?key=08c8428e-02cd-43c9-bd37-680414486a2d&country=US&year=2017&month=12
+required params: key, country, year, month
 */
 
-// API KEY : 08c8428e-02cd-43c9-bd37-680414486a2d
-// TEST URL : https://holidayapi.com/v1/holidays?key=08c8428e-02cd-43c9-bd37-680414486a2d&country=US&year=2017&month=12
-//required params: key, country, year, month
-
-//PROGRAMMA STATICO CON GENNAIO 2017
+/*****************************/
+/*PROGRAMMA COMPLETO DINAMICO*/
+/*****************************/
 
 $(document).ready(function () {
   console.log('welcome to ajax-ex-calendar');
@@ -24,7 +25,9 @@ $(document).ready(function () {
 
 });
 
-//FUNZIONI
+/**********************************/
+/*************FUNZIONI*************/
+/**********************************/
 
 //FUNZIONE PRINCIPALE
 
@@ -51,21 +54,43 @@ function caricaLingueSupportatePoiAvviaCalendario() {
 
     generaMeseCalendarioConChiamataApi(apiParameters);
 
-    $('#inputMese').change(function () {
+    $('.fa-arrow-circle-left, .fa-arrow-circle-right').on('click', aggiornaParametriApiDaClickFrecceERicaricaCalendario);
 
-      var meseAnno = $(this).val().split('-');
+    $('#languages').on('change', aggiornaLinguaApiERicaricaCAlendario);
 
-      apiParameters.data.year = meseAnno[0];
-      apiParameters.data.month = meseAnno[1];
-      apiParameters.data.country = $('#languages').val();
+    function aggiornaParametriApiDaClickFrecceERicaricaCalendario() {
+      var cliccataFrecciaDestra = ($(this).hasClass('fa-arrow-circle-right')) ? true : false;
+
+      if (cliccataFrecciaDestra && !(apiParameters.data.month == 12 && apiParameters.data.year == 2018)){
+        if (apiParameters.data.month != 12) {
+          apiParameters.data.month++;
+        } else {
+          apiParameters.data.year++;
+          apiParameters.data.month = 1;
+        }
+      } else if (!cliccataFrecciaDestra) {
+        if (apiParameters.data.month != 1) {
+          apiParameters.data.month--;
+        } else {
+          apiParameters.data.year--;
+          apiParameters.data.month = 12;
+        }
+      }
+
+      aggiornaLinguaApiERicaricaCAlendario();
+    }
+
+    function aggiornaLinguaApiERicaricaCAlendario() {
+
+      apiParameters.data.country =  $('#languages').val();
 
       generaMeseCalendarioConChiamataApi(apiParameters);
-    });
+    }
 
   });
 }
 
-//LOGICA(MOMENT.JS)
+//GESTIONE LINGUE
 
 function ottieniElencoLingueSupportateDa(htmlApi) {
   var lingueApi = [];
@@ -88,6 +113,8 @@ function generaListaLingueProgrammaDa(lingueApi, lingueMoment) {
   }
   return lingueProgramma;
 }
+
+//LOGICA OGGETTO MESE CON MOMENT.JS E DATI FESTIVITA' DA API
 
 function creaMeseDa(anno, nrMese) {
 
@@ -112,7 +139,7 @@ function creaGiorniDel(mese) {
     var giorno = {
       nrGiorno: i,
       festivo: false,
-      nrGiornoInSettimana: day.format('e'),
+      nrGiornoInSettimana: parseInt(day.format('e')),
       nomeGiornoInSettimana: day.format('dddd'),
     }
 
@@ -120,8 +147,6 @@ function creaGiorniDel(mese) {
   }
   return giorni;
 }
-
-//LOGICA DATI API
 
 function generaMeseCalendarioConChiamataApi(apiParameters) {
 
@@ -139,11 +164,9 @@ function generaMeseCalendarioConChiamataApi(apiParameters) {
 
       console.log(meseScelto);
 
-      //produci h1 .selected_month
       mostraTitoloPer(meseScelto);
 
-      //produci gli li per il mese corrente
-      mostraListaGiorniPer(meseScelto);
+      mostraSettimaneDa(meseScelto);
 
     },
 
@@ -189,16 +212,99 @@ function creaSettimaneDa(giorni) {
 //INTERFACCIA
 
 function mostraTitoloPer(mese) {
-  $('.selected_month').remove();
+  $('.calendar_header .month .selected_month').remove();
   var htmlTemplateMese = $('#selectedMonth').html();
   var template = Handlebars.compile(htmlTemplateMese);
   var data = {
     month: mese.nome,
-    year: mese.anno
-  }
+    year: mese.anno,
+  };
+
   var htmlRisultato = template(data);
 
-  $('.month').append(htmlRisultato);
+  $('.calendar_header .month').append(htmlRisultato);
+}
+
+function mostraSettimaneDa(mese) {
+  $('.calendar_body .week .day').remove();
+  for (var indiceSettimana = 0; indiceSettimana < mese.settimane.length; indiceSettimana++) {
+    var numeroSettimana = indiceSettimana + 1;
+    mostraGiorniPer(mese.settimane[indiceSettimana], indiceSettimana, numeroSettimana);
+  }
+}
+
+function mostraGiorniPer(settimanaNelMese, indiceSettimana, numeroSettimana) {
+
+  //funzioni e valori per gestire l'inizio dei giorni della prima settimana e
+  //il loro piazzzmento
+  function siamoNellaPrimaSettimana() {
+    return indiceSettimana == 0;
+  }
+
+  var indiceGiornoPrimaSettimana = 0;
+  var posizionePrimoGiornoDellaSettimana = 0;
+  if (siamoNellaPrimaSettimana()) {
+    posizionePrimoGiornoDellaSettimana = 7 - settimanaNelMese.length;
+  }
+
+  //per le 7 caselle di ogni settimana
+  for (var i = 0; i < 7; i++) {
+    //Gestisco il valore del giorno corrente in base a che siamo nella prima o nelle altre settimane
+    var giornoCorrente = (siamoNellaPrimaSettimana()) ? settimanaNelMese[indiceGiornoPrimaSettimana] : settimanaNelMese[i];
+
+    //Maneggio il template di Handlebars e compilo i suoi valori
+    //in base alla settimana corrente e al valore di giorno corrente
+    var htmlTemplateSettimana = $('#dayTemplate').html();
+    var template = Handlebars.compile(htmlTemplateSettimana);
+
+    var data = {
+      nrGiorno: '',
+      nrGiornoInSettimana: '',
+      nomeGiornoInSettimana: '',
+    };
+
+    if (giornoCorrente != null && giornoCorrente.nrGiornoInSettimana == i) {
+      data.nrGiorno = giornoCorrente.nrGiorno;
+      data.nrGiornoInSettimana = giornoCorrente.nrGiornoInSettimana;
+      data.nomeGiornoInSettimana = giornoCorrente.nomeGiornoInSettimana;
+
+      if (giornoCorrente.festivo) {
+        data.nomeFestivita = giornoCorrente.nomeFestivita;
+      }
+
+      if (siamoNellaPrimaSettimana()) {
+        indiceGiornoPrimaSettimana++;
+      }
+    }
+
+    //Creo html finale e gestendo le classi appendo alla settimana corrente
+    var htmlRisultato = template(data);
+
+    var nWeekSelector = '.week:nth-of-type(' + numeroSettimana + ')';
+
+    $(nWeekSelector).append(htmlRisultato);
+
+    if (giornoCorrente != null && giornoCorrente.nrGiornoInSettimana == i) {
+      $(nWeekSelector).children('.day').last().addClass('active');
+
+      if (giornoCorrente.festivo) {
+        $(nWeekSelector).children('.day').last().addClass('holiday');
+      }
+    } else {
+      $(nWeekSelector).children('.day').last().addClass('bg_grey').find('*').each(function () {
+        $(this).addClass('empty_square');
+      });
+    }
+  }
+
+  //Gestisco la visibilita dell'ultima riga
+  if (numeroSettimana >= 5) {
+    if ($('.week.sixth').children('.day').length > 0 ) {
+      $('.week.sixth').removeClass('hidden');
+    } else {
+      $('.week.sixth').addClass('hidden');
+    }
+  }
 }
 
 function popolaLista(lingue) {
@@ -210,34 +316,4 @@ function popolaLista(lingue) {
 
     $('#languages').append(cloneTemplateLingua);
   }
-}
-
-function mostraListaGiorniPer(mese) {
-  $('.days .day_item').remove();
-  var giorniDelMese = [];
-  for (var i = 0; i < mese.settimane.length; i++) {
-    giorniDelMese = giorniDelMese.concat(mese.settimane[i]);
-  }
-
-  for (var i = 0; i < giorniDelMese.length; i++) {
-    var htmlTemplateGiorno = $('#day').html();
-    var template = Handlebars.compile(htmlTemplateGiorno);
-    var data = {
-      number: giorniDelMese[i].nrGiorno,
-      month: mese.nome,
-    };
-    if (giorniDelMese[i].festivo) {
-      data.festivity = giorniDelMese[i].nomeFestivita;
-    }
-
-    var htmlRisultato = template(data);
-
-    $('.days').append(htmlRisultato);
-
-    if (giorniDelMese[i].festivo) {
-      $('.days').children('.day_item').last().addClass('holiday');
-    }
-
-  }
-
 }
