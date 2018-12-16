@@ -32,16 +32,21 @@ $(document).ready(function () {
 //FUNZIONE PRINCIPALE
 
 function caricaLingueSupportatePoiAvviaCalendario() {
+  //Tramite richiesta Get alla pagina dell'API
+  //"Scarico l'html della pagina" e con jQuery individuo le lingue dell'API stessa
   $.get('https://holidayapi.com/', function (data) {
 
     var lingueApi = ottieniElencoLingueSupportateDa($.parseHTML(data));
 
     var lingueMomentJS = moment.locales();
 
+    //Le confronto con quelle di Moment.js e creo una lista lingue incrociando le suddette
     var lingueSupportateProgramma = generaListaLingueProgrammaDa(lingueApi, lingueMomentJS);
 
+    //creo la dropdown delle sole lingue supportate
     popolaLista(lingueSupportateProgramma);
 
+    //Creo i parametri per l'API per la prima chiamata
     var apiParameters = {
       urlBaseApi: 'https://holidayapi.com/v1/holidays',
       data: {
@@ -52,8 +57,10 @@ function caricaLingueSupportatePoiAvviaCalendario() {
       },
     };
 
+    //effettuo la prima Chiamata e Genero il calendario
     generaMeseCalendarioConChiamataApi(apiParameters);
 
+    //Aggiorno il calendario ascoltando i click sulle frecce e il cambio lingua dal dropdown
     $('.fa-arrow-circle-left, .fa-arrow-circle-right').on('click', aggiornaParametriApiDaClickFrecceERicaricaCalendario);
 
     $('#languages').on('change', aggiornaLinguaApiERicaricaCAlendario);
@@ -95,8 +102,8 @@ function caricaLingueSupportatePoiAvviaCalendario() {
 function ottieniElencoLingueSupportateDa(htmlApi) {
   var lingueApi = [];
   $(htmlApi).find('.well-countries a').each(function() {
-   var compHref = $(this).attr('href').split('/');
-   if (compHref[2].length <= 6){
+   var attributoHrefDiACorrente = $(this).attr('href').split('/');
+   if (attributoHrefDiACorrente[2].length <= 6){
      lingueApi.push(compHref[2]);
    }
  });
@@ -179,8 +186,10 @@ function generaMeseCalendarioConChiamataApi(apiParameters) {
 
 function completaDati(mese, festivita) {
 
+  //prima creo un array di giorni
   var giorni = creaGiorniDel(mese);
 
+  //assegno ogni festivita dall'api al giorno corrispondente
   for (var i = 0; i < festivita.length; i++) {
     var festaCorrente = festivita[i];
     var indiceGiornoDiFesta = (parseInt(festaCorrente.date.split('-')[2])) - 1;
@@ -188,8 +197,10 @@ function completaDati(mese, festivita) {
     giorni[indiceGiornoDiFesta].nomeFestivita = festaCorrente.name;
   }
 
+  //con gli oggetti giorni completi delle festività creo le settimane
   var settimane = creaSettimaneDa(giorni);
 
+  //e resituisco l'oggetto settimane(ogni settimana è un oggetto a sua volta)
   return settimane;
 }
 
@@ -250,6 +261,8 @@ function mostraGiorniPer(settimanaNelMese, indiceSettimana, numeroSettimana) {
   //per le 7 caselle di ogni settimana
   for (var i = 0; i < 7; i++) {
     //Gestisco il valore del giorno corrente in base a che siamo nella prima o nelle altre settimane
+    //Se nel riempire una casella il giorno non è del mese corrente viene generata una casella con sfondo
+    //grigio (ciò avviene grazie al risultare null della var)
     var giornoCorrente = (siamoNellaPrimaSettimana()) ? settimanaNelMese[indiceGiornoPrimaSettimana] : settimanaNelMese[i];
 
     //Maneggio il template di Handlebars e compilo i suoi valori

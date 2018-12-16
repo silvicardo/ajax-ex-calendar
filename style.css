@@ -37,10 +37,13 @@
 /************* SEZIONI DOCUMENTO *************/
 /**********************************************/
 
+body {
+  background:#6BB73C;  
+}
+
 #main-container {
   width: 100vw;
   height: 100%;
-  background:#6BB73C;
 }
 
 /* navBar */
